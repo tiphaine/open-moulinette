@@ -1,6 +1,9 @@
 ECHO_SUCCESS=@echo " \033[1;32m✔\033[0m  "
 
-all: download convert
+all: install download convert
+
+install:
+	pip install -r requirements.txt
 
 download:
 	@rm -rf data
