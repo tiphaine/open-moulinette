@@ -164,8 +164,8 @@ data_commune:
 	python scripts/RSACom.py
 	python scripts/EJCom.py
 	python scripts/LogPersPrestaCom.py
-	python scripts/EnfantARS.py
+#	python scripts/EnfantARS.py
 
 merging:
-	@curl --output source/commune_insee.csv  "http://public.opendatasoft.com/explore/dataset/correspondance-code-insee-code-postal/download/?format=csv&timezone=Europe/Berlin&use_labels_for_header=true"
+	python scripts/InseeCommune.py "http://public.opendatasoft.com/explore/dataset/correspondance-code-insee-code-postal/download/?format=csv&timezone=Europe/Berlin&use_labels_for_header=true" source/commune_insee.csv  
 	python scripts/Merging.py

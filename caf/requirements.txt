@@ -6,3 +6,6 @@ pandas>=0.16.2
 
 # pyprind
 pyprind==2.9.3
+
+# requests
+requests>=2.12.4
