@@ -3,7 +3,7 @@
 import pandas as pd
 from comparison import compare_geo, fillna_with_other_table
 
-print "Initialisation..."
+print("Initialisation...")
 
 
 ############################################################
@@ -29,7 +29,7 @@ def _check_geo_nan(data, file_name):
         if col_nan == 0:
             "[OK] No NaN value for "+ col + " in " + file_name
         else:
-            print(u"[WARNING] Il y a " + str(col_nan) + u" NaN pour " + col)
+            print("[WARNING] Il y a " + str(col_nan) + " NaN pour " + col)
             
 
 def _check_iris_doublon(data, file_name):
@@ -45,10 +45,10 @@ def _check_iris_doublon(data, file_name):
     iris_double_list = iris_double[iris_double.nb >=2].IRIS.unique()
     
     if len(iris_double_list) > 0:
-        print "--[KO]-- Warning there is doublon (" +str(len(iris_double_list))+") with file " + file_name
-        print iris_double_list
+        print("--[KO]-- Warning there is doublon (" +str(len(iris_double_list))+") with file " + file_name)
+        print(iris_double_list)
     else:
-        print "[OK] No Iris's doublon with " + file_name
+        print("[OK] No Iris's doublon with " + file_name)
         
         
 def _check_bad_merge_feature(data, file_name):
@@ -57,22 +57,22 @@ def _check_bad_merge_feature(data, file_name):
     """
     
     if len([col for col in data.columns if '_x' in col[-2:]]) > 0:
-        print "--[KO]]-- Warning Problem in merge with " + file_name + " : doublon features --> '.._x' / '.._y'"
+        print("--[KO]]-- Warning Problem in merge with " + file_name + " : doublon features --> '.._x' / '.._y'")
         for col in data.columns:
             if '_x' in col[-2:]:
-                print " -- " +col
+                print(" -- " +col)
     else:
-        print "[OK] No doublon features in " + file_name
+        print("[OK] No doublon features in " + file_name)
 
 def _correct_LIBGEO(data):
     #spécifique 2012
-    data['LIB_IRIS'] = data['LIB_IRIS'].str.replace(u' \(commune non irisée\)', '')
+    data['LIB_IRIS'] = data['LIB_IRIS'].str.replace(' \(commune non irisée\)', '')
     # on le met avant le title()
     data['LIB_IRIS'] = data['LIB_IRIS'].str.title()
     #des fautes d'accent ou de virgule mineures
-    data['LIB_IRIS'] = data['LIB_IRIS'].str.replace(u"Jean Bart Guynemer", u"Jean Bart,Guynemer")
-    data['LIB_IRIS'] = data['LIB_IRIS'].str.replace(u"Nouveau Siècle", u"Nouveau Siecle")
-    data['LIB_IRIS'] = data['LIB_IRIS'].str.replace(u"Labuissière", u"Labuissiere")
+    data['LIB_IRIS'] = data['LIB_IRIS'].str.replace("Jean Bart Guynemer", "Jean Bart,Guynemer")
+    data['LIB_IRIS'] = data['LIB_IRIS'].str.replace("Nouveau Siècle", "Nouveau Siecle")
+    data['LIB_IRIS'] = data['LIB_IRIS'].str.replace("Labuissière", "Labuissiere")
     return data
 
 
@@ -127,7 +127,7 @@ com_2016_iris = {"132090103" : "13055",
 ## FILES
 
 ## Commerce
-commerce = pd.read_excel('data/equip-serv-commerce-infra-2016.xls', sheetname='IRIS')
+commerce = pd.read_excel('data/equip-serv-commerce-infra-2016.xls', sheet_name='IRIS')
 # creating header from file
 header = commerce.loc[4].tolist()
 commerce.columns = header
@@ -141,12 +141,12 @@ features = [x for x in header if x not in ['IRIS','LIB_IRIS','COM','LIB_COM','RE
 commerce['nb_commerce'] =  commerce[features].applymap(lambda x: float(x)).sum(axis=1)
 
 data = commerce
-print "il y a  %d iris différentes pour le commerce et %d features" % (len(commerce.IRIS.unique()), len(features))
+print("il y a  %d iris différentes pour le commerce et %d features" % (len(commerce.IRIS.unique()), len(features)))
 del commerce
 
 
 ## Sport
-sport = pd.read_excel('data/equip-sport-loisir-socio-infra-2016.xls', sheetname='IRIS')
+sport = pd.read_excel('data/equip-sport-loisir-socio-infra-2016.xls', sheet_name='IRIS')
 # creating header from file
 header = sport.loc[4].tolist()
 sport.columns = header
@@ -161,7 +161,7 @@ sport['nb_sport'] = sport[[x for x in sport.columns if x[:5] == 'NB_F1' and len(
 sport['nb_airjeu_sport'] =  sport[[x for x in sport.columns if x[:5] == 'NB_F1' and x[-10:] == 'NB_AIREJEU']]\
                                 .applymap(lambda x: float(x)).sum(axis=1)
 [features.append(i) for i in ['nb_sport', 'IRIS', 'nb_airjeu_sport']]
-print "il y a  %d iris différentes pour le sport et %d features" % (len(sport.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour le sport et %d features" % (len(sport.IRIS.unique()), len(features) - 1))
 
 compare_geo(data, sport)
 data = pd.merge(data, sport[features], on='IRIS', how='outer')
@@ -172,7 +172,7 @@ del sport
 
 
 ## Enseignement 1er degré
-enseignement_1 = pd.read_excel('data/equip-serv-ens-1er-degre-infra-2016.xls', sheetname='IRIS')
+enseignement_1 = pd.read_excel('data/equip-serv-ens-1er-degre-infra-2016.xls', sheet_name='IRIS')
 # creating header from file
 header = enseignement_1.loc[4].tolist()
 enseignement_1.columns = header
@@ -184,7 +184,7 @@ features = [x for x in header if x not in ['IRIS','LIB_IRIS','COM','LIB_COM','RE
 enseignement_1['nb_enseignement_1'] = enseignement_1[[x for x in enseignement_1.columns if x[:2] == 'C1' and len(x) == 4]]\
                                         .applymap(lambda x: float(x)).sum(axis=1)
 [features.append(i) for i in ['nb_enseignement_1', 'IRIS']]
-print "il y a  %d iris différentes pour l'enseignement du 1er degré et %d features" % (len(enseignement_1.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour l'enseignement du 1er degré et %d features" % (len(enseignement_1.IRIS.unique()), len(features) - 1))
 
 compare_geo(data, enseignement_1)
 data = pd.merge(data, enseignement_1[features], on='IRIS', how='outer')
@@ -193,7 +193,7 @@ del enseignement_1
 
 
 ## Enseignement du second degré
-enseignement_2 = pd.read_excel('data/equip-serv-ens-2e-degre-infra-2016.xls', sheetname='IRIS')
+enseignement_2 = pd.read_excel('data/equip-serv-ens-2e-degre-infra-2016.xls', sheet_name='IRIS')
 # creating header from file
 header = enseignement_2.loc[4].tolist()
 enseignement_2.columns = header
@@ -205,7 +205,7 @@ features = [x for x in header if x not in ['IRIS','LIB_IRIS','COM','LIB_COM','RE
 enseignement_2['nb_enseignement_2'] = enseignement_2[[x for x in enseignement_2.columns if x[0] == 'C' and len(x) == 4]]\
                                         .applymap(lambda x: float(x)).sum(axis=1)
 [features.append(i) for i in ['nb_enseignement_2', 'IRIS']]
-print "il y a  %d iris différentes pour l'enseignement du second degré et %d features" % (len(enseignement_2.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour l'enseignement du second degré et %d features" % (len(enseignement_2.IRIS.unique()), len(features) - 1))
 
 compare_geo(data, enseignement_2)
 data = pd.merge(data, enseignement_2[features], on='IRIS', how='outer')
@@ -214,7 +214,7 @@ del enseignement_2
 
 
 ## Enseignement supérieur
-enseignement_sup = pd.read_excel('data/equip-serv-ens-sup-form-serv-infra-2016.xls', sheetname='IRIS')
+enseignement_sup = pd.read_excel('data/equip-serv-ens-sup-form-serv-infra-2016.xls', sheet_name='IRIS')
 # creating header from file
 header = enseignement_sup.loc[4].tolist()
 enseignement_sup.columns = header
@@ -229,7 +229,7 @@ enseignement_sup['nb_enseignement_sup'] =  enseignement_sup[['C401', 'C402', 'C4
                                                              'C601', 'C602', 'C603',
                                                              'C604', 'C605', 'C609']].applymap(lambda x: float(x)).sum(axis=1)
 [features.append(i) for i in ['nb_enseignement_sup', 'IRIS']]
-print "il y a  %d iris différentes pour l'enseignement du supérieur et %d features" % (len(enseignement_sup.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour l'enseignement du supérieur et %d features" % (len(enseignement_sup.IRIS.unique()), len(features) - 1))
 
 compare_geo(data, enseignement_sup)
 data = pd.merge(data, enseignement_sup[features], on='IRIS', how='outer')
@@ -241,7 +241,7 @@ del enseignement_sup
 #-------------------------------------------------------------------------
 
 ## Revenu Ménage
-revenu_menage = pd.read_excel('data/RFDM2011IRI.xls', sheetname=1) #using int cause name of sheetname have some "é"
+revenu_menage = pd.read_excel('data/RFDM2011IRI.xls', sheet_name=1) #using int cause name of sheet_name have some "é"
 # creating header from file
 header = revenu_menage.loc[5].tolist()
 revenu_menage.columns = header
@@ -251,7 +251,7 @@ revenu_menage = revenu_menage[6:]
 features = [x for x in header if x not in ['IRIS','LIBIRIS','COM','LIBCOM','REG','DEP','ARR','CV','ZE2010']] # special list for this file
 # No need to sum features here (% and quantile)
 features.append('IRIS')
-print "il y a  %d iris différentes pour le revenu par ménage et %d features" % (len(revenu_menage.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour le revenu par ménage et %d features" % (len(revenu_menage.IRIS.unique()), len(features) - 1))
 
 revenu_menage['LIBCOM'] = revenu_menage['LIBCOM'].str.replace(' - ', '-')
 # Transform old REG code whit the new one (REG 2016)
@@ -264,7 +264,7 @@ _check_data(data, "Revenu Ménage 11")
 del revenu_menage
 
 ## Revenu par personne
-revenu_personne = pd.read_excel('data/RFDP2011IRI.xls', sheetname=1) #using int cause name of sheetname have some "é"
+revenu_personne = pd.read_excel('data/RFDP2011IRI.xls', sheet_name=1) #using int cause name of sheet_name have some "é"
 # creating header from file
 header = revenu_personne.loc[5].tolist()
 revenu_personne.columns = header
@@ -274,9 +274,9 @@ revenu_personne = revenu_personne[6:]
 features = [x for x in header if x not in ['IRIS','LIBIRIS','COM','LIBCOM','REG','DEP','ARR','CV','ZE2010']] # special list for this file
 # No need to sum features here (% and quantile)
 features.append('IRIS')
-print "il y a  %d iris différentes pour le revenu par personne et %d features" % (len(revenu_personne.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour le revenu par personne et %d features" % (len(revenu_personne.IRIS.unique()), len(features) - 1))
 
-revenu_personne['LIBCOM'] = revenu_personne['LIBCOM'].str.replace(u' - ', u'-')
+revenu_personne['LIBCOM'] = revenu_personne['LIBCOM'].str.replace(' - ', '-')
 # Transform old REG code whit the new one (REG 2016)
 revenu_personne['REG'] = revenu_personne.REG.map(new_reg_dict)
 ## TO CHANGE ??
@@ -288,7 +288,7 @@ del revenu_personne
 
 
 ## Revenu par unité de consomation
-revenu_uc = pd.read_excel('data/RFDU2011IRI.xls', sheetname=1) #using int cause name of sheetname have some "é"
+revenu_uc = pd.read_excel('data/RFDU2011IRI.xls', sheet_name=1) #using int cause name of sheet_name have some "é"
 # creating header from file
 header = revenu_uc.loc[5].tolist()
 revenu_uc.columns = header
@@ -298,9 +298,9 @@ revenu_uc = revenu_uc[6:]
 features = [x for x in header if x not in ['IRIS','LIBIRIS','COM','LIBCOM','REG','DEP','ARR','CV','ZE2010']] # special list for this file
 # No need to sum features here (% and quantile)
 features.append('IRIS')
-print "il y a  %d iris différentes pour le revenu par unité de consomation et %d features" % (len(revenu_uc.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour le revenu par unité de consomation et %d features" % (len(revenu_uc.IRIS.unique()), len(features) - 1))
 
-revenu_uc['LIBCOM'] = revenu_uc['LIBCOM'].str.replace(u' - ', u'-')
+revenu_uc['LIBCOM'] = revenu_uc['LIBCOM'].str.replace(' - ', '-')
 # Transform old REG code whit the new one (REG 2016)
 revenu_uc['REG'] = revenu_uc.REG.map(new_reg_dict)
 compare_geo(data, revenu_uc)
@@ -309,7 +309,7 @@ _check_data(data, "Revenu par unité de consomation 11")
 del revenu_uc
 
 ## Revenu % imposé + détails (% ménage imposé, dont traitement salaire etc..)
-revenu_impose = pd.read_excel('data/RFST2011IRI.xls', sheetname=1) #using int cause name of sheetname have some "é"
+revenu_impose = pd.read_excel('data/RFST2011IRI.xls', sheet_name=1) #using int cause name of sheet_name have some "é"
 # creating header from file
 header = revenu_impose.loc[5].tolist()
 revenu_impose.columns = header
@@ -319,9 +319,9 @@ revenu_impose = revenu_impose[6:]
 features = [x for x in header if x not in ['IRIS','LIBIRIS','COM','LIBCOM','REG','DEP','ARR','CV','ZE2010']] # special list for this file
 # No need to sum features here (% and quantile)
 features.append('IRIS')
-print "il y a  %d iris différentes pour le revenu par ménage imposé et %d features" % (len(revenu_impose.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour le revenu par ménage imposé et %d features" % (len(revenu_impose.IRIS.unique()), len(features) - 1))
 
-revenu_impose['LIBCOM'] = revenu_impose['LIBCOM'].str.replace(u' - ', u'-')
+revenu_impose['LIBCOM'] = revenu_impose['LIBCOM'].str.replace(' - ', '-')
 # Transform old REG code whit the new one (REG 2016)
 revenu_impose['REG'] = revenu_impose.REG.map(new_reg_dict)
 compare_geo(data, revenu_impose)
@@ -334,7 +334,7 @@ del revenu_impose
 
 
 ## Equipement social
-equipement_social = pd.read_excel('data/equip-serv-action-sociale-infra-2016.xls', sheetname='IRIS')
+equipement_social = pd.read_excel('data/equip-serv-action-sociale-infra-2016.xls', sheet_name='IRIS')
 # creating header from file
 header = equipement_social.loc[4].tolist()
 equipement_social.columns = header
@@ -344,7 +344,7 @@ equipement_social = equipement_social[5:]
 features = [x for x in header if x not in ['IRIS','LIB_IRIS','COM','LIB_COM','REG','REG2016','DEP','ARR']]
 equipement_social['nb_equipement_social'] =  equipement_social[features].applymap(lambda x: float(x)).sum(axis=1)
 [features.append(i) for i in ['nb_equipement_social', 'IRIS']]
-print "il y a  %d iris différentes pour l'équipement social et %d features" % (len(equipement_social.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour l'équipement social et %d features" % (len(equipement_social.IRIS.unique()), len(features) - 1))
 
 compare_geo(data, equipement_social)
 data = pd.merge(data, equipement_social[features], on='IRIS', how='outer')
@@ -355,7 +355,7 @@ del equipement_social
 
 
 ## Equipement santé
-equipement_sante = pd.read_excel('data/equip-serv-sante-infra-2016.xls', sheetname='IRIS')
+equipement_sante = pd.read_excel('data/equip-serv-sante-infra-2016.xls', sheet_name='IRIS')
 # creating header from file
 header = equipement_sante.loc[4].tolist()
 equipement_sante.columns = header
@@ -365,7 +365,7 @@ equipement_sante = equipement_sante[5:]
 features = [x for x in header if x not in ['IRIS','LIB_IRIS','COM','LIB_COM','REG','REG2016','DEP','ARR']]
 equipement_sante['nb_equipement_sante'] =  equipement_sante[features].applymap(lambda x: float(x)).sum(axis=1)
 [features.append(i) for i in ['nb_equipement_sante', 'IRIS']]
-print "il y a  %d iris différentes pour l'équipement de santé et %d features" % (len(equipement_sante.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour l'équipement de santé et %d features" % (len(equipement_sante.IRIS.unique()), len(features) - 1))
 
 compare_geo(data, equipement_sante)
 data = pd.merge(data, equipement_sante[features], on='IRIS', how='outer')
@@ -374,7 +374,7 @@ del equipement_sante
 
 
 ## Fonction médical
-fonction_medical = pd.read_excel('data/equip-serv-medical-para-infra-2016.xls', sheetname='IRIS')
+fonction_medical = pd.read_excel('data/equip-serv-medical-para-infra-2016.xls', sheet_name='IRIS')
 # creating header from file
 header = fonction_medical.loc[4].tolist()
 fonction_medical.columns = header
@@ -384,7 +384,7 @@ fonction_medical = fonction_medical[5:]
 features = [x for x in header if x not in ['IRIS','LIB_IRIS','COM','LIB_COM','REG','REG2016','DEP','ARR']]
 fonction_medical['nb_fonction_medical'] =  fonction_medical[features].applymap(lambda x: float(x)).sum(axis=1)
 [features.append(i) for i in ['nb_fonction_medical', 'IRIS']]
-print "il y a  %d iris différentes pour les fonctions médical et %d features" % (len(fonction_medical.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour les fonctions médical et %d features" % (len(fonction_medical.IRIS.unique()), len(features) - 1))
 
 compare_geo(data, fonction_medical)
 data = pd.merge(data, fonction_medical[features], on='IRIS', how='outer')
@@ -392,7 +392,7 @@ _check_data(data, "Fonction médical 16")
 del fonction_medical
 
 ## Service pour les particuliers
-service_particulier = pd.read_excel('data/equip-serv-particuliers-infra-2016.xls', sheetname='IRIS')
+service_particulier = pd.read_excel('data/equip-serv-particuliers-infra-2016.xls', sheet_name='IRIS')
 # creating header from file
 header = service_particulier.loc[4].tolist()
 service_particulier.columns = header
@@ -402,7 +402,7 @@ service_particulier = service_particulier[5:]
 features = [x for x in header if x not in ['IRIS','LIB_IRIS','COM','LIB_COM','REG','REG2016','DEP','ARR']]
 service_particulier['nb_service_particulier'] =  service_particulier[features].applymap(lambda x: float(x)).sum(axis=1)
 [features.append(i) for i in ['nb_service_particulier', 'IRIS']]
-print "il y a  %d iris différentes pour les services aux particulier et %d features" % (len(service_particulier.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour les services aux particulier et %d features" % (len(service_particulier.IRIS.unique()), len(features) - 1))
 
 compare_geo(data, service_particulier)
 data = pd.merge(data, service_particulier[features], on='IRIS', how='outer')
@@ -411,7 +411,7 @@ del service_particulier
 
 
 ## Transport touristique
-transport_tourisme = pd.read_excel('data/equip-tour-transp-infra-2016.xls', sheetname='IRIS')
+transport_tourisme = pd.read_excel('data/equip-tour-transp-infra-2016.xls', sheet_name='IRIS')
 # creating header from file
 header = transport_tourisme.loc[4].tolist()
 transport_tourisme.columns = header
@@ -421,7 +421,7 @@ transport_tourisme = transport_tourisme[5:]
 features = [x for x in header if x not in ['IRIS','LIB_IRIS','COM','LIB_COM','REG','REG2016','DEP','ARR']]
 transport_tourisme['nb_transport_tourisme'] =  transport_tourisme[features].applymap(lambda x: float(x)).sum(axis=1)
 [features.append(i) for i in ['nb_transport_tourisme', 'IRIS']]
-print "il y a  %d iris différentes pour le transport touristique et %d features" % (len(transport_tourisme.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour le transport touristique et %d features" % (len(transport_tourisme.IRIS.unique()), len(features) - 1))
 
 compare_geo(data, transport_tourisme)
 data = pd.merge(data, transport_tourisme[features], on='IRIS', how='outer')
@@ -435,7 +435,7 @@ del transport_tourisme
 
 
 ### Logement 2011
-logement11 = pd.read_excel('data/base-ic-logement-2011.xls', sheetname='IRIS')
+logement11 = pd.read_excel('data/base-ic-logement-2011.xls', sheet_name='IRIS')
 # creating header from file
 header = logement11.loc[4].tolist()
 logement11.columns = header
@@ -448,14 +448,14 @@ features = [x for x in header if x not in ['LIBIRIS', 'LIBCOM', 'COM', 'LIB_IRIS
                                            'REG', 'DEP']]
 features.remove('P11_PMEN') # P11_PMEN is already in Population file (https://github.com/anthill/open-moulinette/issues/18)
 
-print "il y a  %d iris différentes pour le logement 2011 et %d features" % (len(logement11.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour le logement 2011 et %d features" % (len(logement11.IRIS.unique()), len(features) - 1))
 
 logement11 = _correct_LIBGEO(logement11)
 # Transform old REG code with the new one (REG 2016)
 logement11['REG'] = logement11.REG.map(new_reg_dict)
 
 # update old COM (Insse code) to new one (2016)
-for iris in com_2016_iris.keys():
+for iris in list(com_2016_iris.keys()):
     logement11.loc[logement11.IRIS == iris, 'COM'] = com_2016_iris[iris]
 
 data = _correct_LIBGEO(data)
@@ -470,7 +470,7 @@ del logement11
 
 
 ## Diplome 2011
-diplome11 = pd.read_excel('data/base-ic-diplomes-formation-2011.xls', sheetname='IRIS')
+diplome11 = pd.read_excel('data/base-ic-diplomes-formation-2011.xls', sheet_name='IRIS')
 # creating header from file
 header = diplome11.loc[4].tolist()
 diplome11.columns = header
@@ -484,7 +484,7 @@ features = [x for x in header if x not in ['LIBIRIS', 'LIBCOM', 'COM', 'UU2010',
 features.remove('P11_POP0610') # P11_POP0610 is already in Population file (https://github.com/anthill/open-moulinette/issues/18)
 features.remove('P11_POP1824') # P11_POP1824 is already in Population file (https://github.com/anthill/open-moulinette/issues/18)
        
-print "il y a  %d iris différentes pour les diplomes 2011 et %d features" % (len(diplome11.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour les diplomes 2011 et %d features" % (len(diplome11.IRIS.unique()), len(features) - 1))
 
 # Transform old REG code with the new one (REG 2016)
 diplome11['REG'] = diplome11.REG.map(new_reg_dict)
@@ -495,7 +495,7 @@ _check_data(data, "Diplome 2011")
 del diplome11
 
 ## Famille 2011
-famille11 = pd.read_excel('data/base-ic-couples-familles-menages-2011.xls', sheetname='IRIS')
+famille11 = pd.read_excel('data/base-ic-couples-familles-menages-2011.xls', sheet_name='IRIS')
 # creating header from file
 header = famille11.loc[4].tolist()
 famille11.columns = header
@@ -509,7 +509,7 @@ features.remove('P11_POP1524') # P11_POP1524 is already in Activité file (https
 features.remove('P11_POP2554') # P11_POP2554 is already in Activité file (https://github.com/anthill/open-moulinette/issues/18)
 features.remove('P11_POP80P') # P11_POP80P is already in Population file (https://github.com/anthill/open-moulinette/issues/18)
 
-print "il y a  %d iris différentes pour les familles 2011 et %d features" % (len(famille11.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour les familles 2011 et %d features" % (len(famille11.IRIS.unique()), len(features) - 1))
 
 # Transform old REG code with the new one (REG 2016)
 famille11['REG'] = famille11.REG.map(new_reg_dict)
@@ -521,7 +521,7 @@ del famille11
 
 
 ## Population 2011
-population11 = pd.read_excel('data/base-ic-evol-struct-pop-2011.xls', sheetname='IRIS')
+population11 = pd.read_excel('data/base-ic-evol-struct-pop-2011.xls', sheet_name='IRIS')
 # creating header from file
 header = population11.loc[4].tolist()
 population11.columns = header
@@ -532,7 +532,7 @@ features = [x for x in header if x not in ['LIBIRIS', 'LIBCOM', 'COM', 'UU2010',
                                            'GRD_QUART', 'TYP_IRIS', 'MODIF_IRIS', 'LAB_IRIS', 
                                            'REG', 'DEP']] # This line has been load with Logement file
 
-print "il y a  %d iris différentes pour le population 2011 et %d features" % (len(population11.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour le population 2011 et %d features" % (len(population11.IRIS.unique()), len(features) - 1))
 
 # Transform old REG code with the new one (REG 2016)
 population11['REG'] = population11.REG.map(new_reg_dict)
@@ -544,7 +544,7 @@ del population11
 
 
 ## Activité 2011
-activite11 = pd.read_excel('data/base-ic-activite-residents-2011.xls', sheetname='IRIS')
+activite11 = pd.read_excel('data/base-ic-activite-residents-2011.xls', sheet_name='IRIS')
 # creating header from file
 header = activite11.loc[4].tolist()
 activite11.columns = header
@@ -558,7 +558,7 @@ features = [x for x in header if x not in ['LIBIRIS', 'LIBCOM', 'COM', 'UU2010',
 features.remove('P11_POP5564') # P11_POP5564 is already in Population file (https://github.com/anthill/open-moulinette/issues/18)
 
 
-print "il y a  %d iris différentes pour l'activité 2011 et %d features" % (len(activite11.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour l'activité 2011 et %d features" % (len(activite11.IRIS.unique()), len(features) - 1))
 
 # Transform old REG code with the new one (REG 2016)
 activite11['REG'] = activite11.REG.map(new_reg_dict)
@@ -577,7 +577,7 @@ del activite11
 
 
 # Logement 2012
-logement12 = pd.read_excel('data/base-ic-logement-2012.xls', sheetname='IRIS')
+logement12 = pd.read_excel('data/base-ic-logement-2012.xls', sheet_name='IRIS')
 # creating header from file
 header = logement12.loc[4].tolist()
 logement12.columns = header
@@ -588,13 +588,13 @@ features = [x for x in header if x not in ['LIBIRIS', 'LIBCOM', 'COM', 'UU2010',
                                            'GRD_QUART', 'TYP_IRIS', 'MODIF_IRIS', 'LAB_IRIS', 
                                            'REG', 'DEP']] # This line has been load with Logement file
 
-print "il y a  %d iris différentes pour le logement 2012 et %d features" % (len(logement12.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour le logement 2012 et %d features" % (len(logement12.IRIS.unique()), len(features) - 1))
 
 # Transform old REG code with the new one (REG 2016)
 logement12['REG'] = logement12.REG.map(new_reg_dict)
 
 # update old COM (Insse code) to new one (2016)
-for iris in com_2016_iris.keys():
+for iris in list(com_2016_iris.keys()):
     logement12.loc[logement12.IRIS == iris, 'COM'] = com_2016_iris[iris]
 
 compare_geo(data, logement12)
@@ -606,7 +606,7 @@ del logement12
 
 
 ## Diplome 2012
-diplome12 = pd.read_excel('data/base-ic-diplomes-formation-2012.xls', sheetname='IRIS')
+diplome12 = pd.read_excel('data/base-ic-diplomes-formation-2012.xls', sheet_name='IRIS')
 # creating header from file
 header = diplome12.loc[4].tolist()
 diplome12.columns = header
@@ -620,13 +620,13 @@ features.remove('P12_POP0610') # P12_POP0610 is already in PopPulation file
 features.remove('P12_POP1824') # P12_POP1824 is already in Population file
 features.remove('REG2016') # We use "REG2016" style on "REG"
 
-print "il y a  %d iris différentes pour le diplome 2012 et %d features" % (len(diplome12.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour le diplome 2012 et %d features" % (len(diplome12.IRIS.unique()), len(features) - 1))
 
 # Transform old REG code with the new one (REG 2016)
 diplome12['REG'] = diplome12.REG.map(new_reg_dict)
 
 # update old COM (Insse code) to new one (2016)
-for iris in com_2016_iris.keys():
+for iris in list(com_2016_iris.keys()):
     diplome12.loc[diplome12.IRIS == iris, 'COM'] = com_2016_iris[iris]
 
 compare_geo(data, diplome12)
@@ -636,7 +636,7 @@ del diplome12
 
 
 ## Famille 2012
-famille12 = pd.read_excel('data/base-ic-couples-familles-menages-2012.xls', sheetname='IRIS')
+famille12 = pd.read_excel('data/base-ic-couples-familles-menages-2012.xls', sheet_name='IRIS')
 # creating header from file
 header = famille12.loc[4].tolist()
 famille12.columns = header
@@ -651,13 +651,13 @@ features.remove('P12_POP2554') # P12_POP2554 is already in Activité file
 features.remove('P12_POP80P') # P12_POP80P is already in Population file
 features.remove('REG2016') # We use "REG2016" style on "REG"
 
-print "il y a  %d iris différentes pour les familles 2012 et %d features" % (len(famille12.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour les familles 2012 et %d features" % (len(famille12.IRIS.unique()), len(features) - 1))
 
 # Transform old REG code with the new one (REG 2016)
 famille12['REG'] = famille12.REG.map(new_reg_dict)
 
 # update old COM (Insse code) to new one (2016)
-for iris in com_2016_iris.keys():
+for iris in list(com_2016_iris.keys()):
     famille12.loc[famille12.IRIS == iris, 'COM'] = com_2016_iris[iris]
 
 compare_geo(data, famille12)
@@ -667,7 +667,7 @@ del famille12
 
 
 ## Population 2012
-population12 = pd.read_excel('data/base-ic-evol-struct-pop-2012.xls', sheetname='IRIS')
+population12 = pd.read_excel('data/base-ic-evol-struct-pop-2012.xls', sheet_name='IRIS')
 # creating header from file
 header = population12.loc[4].tolist()
 population12.columns = header
@@ -680,13 +680,13 @@ features = [x for x in header if x not in ['LIBIRIS', 'LIBCOM', 'COM', 'UU2010',
 features.remove('P12_PMEN')  # Already in data
 features.remove('REG2016') # We use "REG2016" style on "REG"
 
-print "il y a  %d iris différentes pour le population 2012 et %d features" % (len(population12.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour le population 2012 et %d features" % (len(population12.IRIS.unique()), len(features) - 1))
 
 # Transform old REG code with the new one (REG 2016)
 population12['REG'] = population12.REG.map(new_reg_dict)
 
 # update old COM (Insse code) to new one (2016)
-for iris in com_2016_iris.keys():
+for iris in list(com_2016_iris.keys()):
     population12.loc[population12.IRIS == iris, 'COM'] = com_2016_iris[iris]
 
 compare_geo(data, population12)
@@ -696,7 +696,7 @@ del population12
 
 
 ## Activité 2012
-activite12 = pd.read_excel('data/base-ic-activite-residents-2012.xls', sheetname='IRIS')
+activite12 = pd.read_excel('data/base-ic-activite-residents-2012.xls', sheet_name='IRIS')
 # creating header from file
 header = activite12.loc[4].tolist()
 activite12.columns = header
@@ -709,13 +709,13 @@ features = [x for x in header if x not in ['LIBIRIS', 'LIBCOM', 'COM', 'UU2010',
 features.remove('P12_POP5564')  # Already in data
 features.remove('REG2016') # We use "REG2016" style on "REG"
 
-print "il y a  %d iris différentes pour l'activité 2012 et %d features" % (len(activite12.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour l'activité 2012 et %d features" % (len(activite12.IRIS.unique()), len(features) - 1))
 
 # Transform old REG code with the new one (REG 2016)
 activite12['REG'] = activite12.REG.map(new_reg_dict)
 
 # update old COM (Insse code) to new one (2016)
-for iris in com_2016_iris.keys():
+for iris in list(com_2016_iris.keys()):
     activite12.loc[activite12.IRIS == iris, 'COM'] = com_2016_iris[iris]
 
 compare_geo(data, activite12)
@@ -731,7 +731,7 @@ del activite12
 
 
 # Logement 2013
-logement13 = pd.read_excel('data/base-ic-logement-2013.xls', sheetname='IRIS')
+logement13 = pd.read_excel('data/base-ic-logement-2013.xls', sheet_name='IRIS')
 # creating header from file
 header = logement13.loc[4].tolist()
 logement13.columns = header
@@ -743,13 +743,13 @@ features = [x for x in header if x not in ['LIBIRIS', 'LIBCOM', 'COM', 'UU2010',
                                            'REG', 'DEP']] # This line has been load with Logement file
 features.remove('REG2016') # We use "REG2016" style on "REG"
                                            
-print "il y a  %d iris différentes pour le logement 2013 et %d features" % (len(logement13.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour le logement 2013 et %d features" % (len(logement13.IRIS.unique()), len(features) - 1))
 
 # Transform old REG code with the new one (REG 2016)
 logement13['REG'] = logement13.REG.map(new_reg_dict)
 
 # update old COM (Insse code) to new one (2016)
-for iris in com_2016_iris.keys():
+for iris in list(com_2016_iris.keys()):
     logement13.loc[logement13.IRIS == iris, 'COM'] = com_2016_iris[iris]
 
 compare_geo(data, logement13)
@@ -761,7 +761,7 @@ del logement13
 
 
 ## Diplome 2013
-diplome13 = pd.read_excel('data/base-ic-diplomes-formation-2013.xls', sheetname='IRIS')
+diplome13 = pd.read_excel('data/base-ic-diplomes-formation-2013.xls', sheet_name='IRIS')
 # creating header from file
 header = diplome13.loc[4].tolist()
 diplome13.columns = header
@@ -776,13 +776,13 @@ features.remove('P13_POP0610') # P13_POP0610 is already in Population file (http
 features.remove('P13_POP1824') # P13_POP1824 is already in Population file (https://github.com/anthill/open-moulinette/issues/18)
 features.remove('REG2016') # We use "REG2016" style on "REG"
 
-print "il y a  %d iris différentes pour le diplome 2013 et %d features" % (len(diplome13.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour le diplome 2013 et %d features" % (len(diplome13.IRIS.unique()), len(features) - 1))
 
 # Transform old REG code with the new one (REG 2016)
 diplome13['REG'] = diplome13.REG.map(new_reg_dict)
 
 # update old COM (Insse code) to new one (2016)
-for iris in com_2016_iris.keys():
+for iris in list(com_2016_iris.keys()):
     diplome13.loc[diplome13.IRIS == iris, 'COM'] = com_2016_iris[iris]
 
 compare_geo(data, diplome13)
@@ -792,7 +792,7 @@ del diplome13
 
 
 ## Famille 2013
-famille13 = pd.read_excel('data/base-ic-couples-familles-menages-2013.xls', sheetname='IRIS')
+famille13 = pd.read_excel('data/base-ic-couples-familles-menages-2013.xls', sheet_name='IRIS')
 # creating header from file
 header = famille13.loc[4].tolist()
 famille13.columns = header
@@ -807,13 +807,13 @@ features.remove('P13_POP2554') # P13_POP2554 is already in Activité file
 features.remove('P13_POP80P') # P13_POP80P is already in Population file
 features.remove('REG2016') # We use "REG2016" style on "REG"
 
-print "il y a  %d iris différentes pour les familles 2013 et %d features" % (len(famille13.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour les familles 2013 et %d features" % (len(famille13.IRIS.unique()), len(features) - 1))
 
 # Transform old REG code with the new one (REG 2016)
 famille13['REG'] = famille13.REG.map(new_reg_dict)
 
 # update old COM (Insse code) to new one (2016)
-for iris in com_2016_iris.keys():
+for iris in list(com_2016_iris.keys()):
     famille13.loc[famille13.IRIS == iris, 'COM'] = com_2016_iris[iris]
 
 compare_geo(data, famille13)
@@ -823,7 +823,7 @@ del famille13
 
 
 ## Population 2013
-population13 = pd.read_excel('data/base-ic-evol-struct-pop-2013.xls', sheetname='IRIS')
+population13 = pd.read_excel('data/base-ic-evol-struct-pop-2013.xls', sheet_name='IRIS')
 # creating header from file
 header = population13.loc[4].tolist()
 population13.columns = header
@@ -836,12 +836,12 @@ features = [x for x in header if x not in ['LIBIRIS', 'LIBCOM', 'COM', 'UU2010',
 features.remove('P13_PMEN') # P13_POP1524 is already in Activité file
 features.remove('REG2016') # We use "REG2016" style on "REG"
 
-print "il y a  %d iris différentes pour le population 2013 et %d features" % (len(population13.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour le population 2013 et %d features" % (len(population13.IRIS.unique()), len(features) - 1))
 # Transform old REG code with the new one (REG 2016)
 population13['REG'] = population13.REG.map(new_reg_dict)
 
 # update old COM (Insse code) to new one (2016)
-for iris in com_2016_iris.keys():
+for iris in list(com_2016_iris.keys()):
     population13.loc[population13.IRIS == iris, 'COM'] = com_2016_iris[iris]
 
 compare_geo(data, population13)
@@ -851,7 +851,7 @@ del population13
 
 
 ## Activité 2013
-activite13 = pd.read_excel('data/base-ic-activite-residents-2013.xls', sheetname='IRIS')
+activite13 = pd.read_excel('data/base-ic-activite-residents-2013.xls', sheet_name='IRIS')
 # creating header from file
 header = activite13.loc[4].tolist()
 activite13.columns = header
@@ -864,12 +864,12 @@ features = [x for x in header if x not in ['LIBIRIS', 'LIBCOM', 'COM', 'UU2010',
 features.remove('P13_POP5564') # P13_POP5564 is already in Population file
 features.remove('REG2016') # We use "REG2016" style on "REG"
 
-print "il y a  %d iris différentes pour l'activité 2013 et %d features" % (len(activite13.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour l'activité 2013 et %d features" % (len(activite13.IRIS.unique()), len(features) - 1))
 # Transform old REG code with the new one (REG 2016)
 activite13['REG'] = activite13.REG.map(new_reg_dict)
 
 # update old COM (Insse code) to new one (2016)
-for iris in com_2016_iris.keys():
+for iris in list(com_2016_iris.keys()):
     activite13.loc[activite13.IRIS == iris, 'COM'] = com_2016_iris[iris]
 
 compare_geo(data, activite13)
@@ -883,7 +883,7 @@ del activite13
 ############################################################
 
 # Logement 2010
-logement10 = pd.read_excel('data/base-ic-logement-2010.xls', sheetname='IRIS')
+logement10 = pd.read_excel('data/base-ic-logement-2010.xls', sheet_name='IRIS')
 # creating header from file
 header = logement10.loc[4].tolist()
 logement10.columns = header
@@ -896,12 +896,12 @@ features = [x for x in header if x not in ['LIBIRIS', 'LIBCOM', 'COM', 'UU2010',
                                            'REG', 'DEP']] # This line has been load with Logement file
 features.remove('P10_PMEN') # P10_PMEN is already in Population file
        
-print "il y a  %d iris différentes pour le logement 2010 et %d features" % (len(logement10.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour le logement 2010 et %d features" % (len(logement10.IRIS.unique()), len(features) - 1))
 # Transform old REG code with the new one (REG 2016)
 logement10['REG'] = logement10.REG.map(new_reg_dict)
 
 # update old COM (Insse code) to new one (2016)
-for iris in com_2016_iris.keys():
+for iris in list(com_2016_iris.keys()):
     logement10.loc[logement10.IRIS == iris, 'COM'] = com_2016_iris[iris]
 
 
@@ -912,7 +912,7 @@ _check_data(data, "Logement 2010")
 del logement10
 
 ## Diplome 2010
-diplome10 = pd.read_excel('data/base-ic-diplomes-formation-2010.xls', sheetname='IRIS')
+diplome10 = pd.read_excel('data/base-ic-diplomes-formation-2010.xls', sheet_name='IRIS')
 # creating header from file
 header = diplome10.loc[4].tolist()
 diplome10.columns = header
@@ -925,12 +925,12 @@ features = [x for x in header if x not in ['LIBIRIS', 'LIBCOM', 'COM', 'UU2010',
 features.remove('P10_POP0610') # P10_POP0610 is already in Population file (https://github.com/anthill/open-moulinette/issues/18)
 features.remove('P10_POP1824') # P10_POP1824 is already in Population file (https://github.com/anthill/open-moulinette/issues/18)
 
-print "il y a  %d iris différentes pour le diplome 2010 et %d features" % (len(diplome10.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour le diplome 2010 et %d features" % (len(diplome10.IRIS.unique()), len(features) - 1))
 # Transform old REG code with the new one (REG 2016)
 diplome10['REG'] = diplome10.REG.map(new_reg_dict)
 
 # update old COM (Insse code) to new one (2016)
-for iris in com_2016_iris.keys():
+for iris in list(com_2016_iris.keys()):
     diplome10.loc[diplome10.IRIS == iris, 'COM'] = com_2016_iris[iris]
 
 compare_geo(data, diplome10)
@@ -940,7 +940,7 @@ del diplome10
 
 
 ## Famille 2010
-famille10 = pd.read_excel('data/base-ic-couples-familles-menages-2010.xls', sheetname='IRIS')
+famille10 = pd.read_excel('data/base-ic-couples-familles-menages-2010.xls', sheet_name='IRIS')
 # creating header from file
 header = famille10.loc[4].tolist()
 famille10.columns = header
@@ -954,12 +954,12 @@ features.remove('P10_POP1524') # P10_POP1524 is already in Activité file
 features.remove('P10_POP2554') # P10_POP2554 is already in Activité file
 features.remove('P10_POP80P') # P10_POP80P is already in Population file
 
-print "il y a  %d iris différentes pour les familles 2010 et %d features" % (len(famille10.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour les familles 2010 et %d features" % (len(famille10.IRIS.unique()), len(features) - 1))
 # Transform old REG code with the new one (REG 2016)
 famille10['REG'] = famille10.REG.map(new_reg_dict)
 
 # update old COM (Insse code) to new one (2016)
-for iris in com_2016_iris.keys():
+for iris in list(com_2016_iris.keys()):
     famille10.loc[famille10.IRIS == iris, 'COM'] = com_2016_iris[iris]
 
 compare_geo(data, famille10)
@@ -969,7 +969,7 @@ del famille10
 
 
 ## Population 2010
-population10 = pd.read_excel('data/base-ic-evol-struct-pop-2010.xls', sheetname='IRIS')
+population10 = pd.read_excel('data/base-ic-evol-struct-pop-2010.xls', sheet_name='IRIS')
 # creating header from file
 header = population10.loc[4].tolist()
 population10.columns = header
@@ -980,12 +980,12 @@ features = [x for x in header if x not in ['LIBIRIS', 'LIBCOM', 'COM', 'UU2010',
                                            'GRD_QUART', 'TYP_IRIS', 'MODIF_IRIS', 'LAB_IRIS', 
                                            'REG', 'DEP']] # This line has been load with Logement file
 
-print "il y a  %d iris différentes pour le population 2010 et %d features" % (len(population10.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour le population 2010 et %d features" % (len(population10.IRIS.unique()), len(features) - 1))
 # Transform old REG code with the new one (REG 2016)
 population10['REG'] = population10.REG.map(new_reg_dict)
 
 # update old COM (Insse code) to new one (2016)
-for iris in com_2016_iris.keys():
+for iris in list(com_2016_iris.keys()):
     population10.loc[population10.IRIS == iris, 'COM'] = com_2016_iris[iris]
 
 compare_geo(data, population10)
@@ -995,7 +995,7 @@ del population10
 
 
 ## Activité 2010
-activite10 = pd.read_excel('data/base-ic-caract-emploi-2010.xls', sheetname='IRIS')
+activite10 = pd.read_excel('data/base-ic-caract-emploi-2010.xls', sheet_name='IRIS')
 # creating header from file
 header = activite10.loc[4].tolist()
 activite10.columns = header
@@ -1009,12 +1009,12 @@ features = [x for x in header if x not in ['LIBIRIS', 'LIBCOM', 'COM', 'UU2010',
 features.remove('P10_POP5564') # P10_POP5564 is already in Population file
 
 
-print "il y a  %d iris différentes pour l'activité 2010 et %d features" % (len(activite10.IRIS.unique()), len(features) - 1)
+print("il y a  %d iris différentes pour l'activité 2010 et %d features" % (len(activite10.IRIS.unique()), len(features) - 1))
 # Transform old REG code with the new one (REG 2016)
 activite10['REG'] = activite10.REG.map(new_reg_dict)
 
 # update old COM (Insse code) to new one (2016)
-for iris in com_2016_iris.keys():
+for iris in list(com_2016_iris.keys()):
     activite10.loc[activite10.IRIS == iris, 'COM'] = com_2016_iris[iris]
 
 compare_geo(data, activite10)
@@ -1041,7 +1041,7 @@ iris_features = [x for x in data.columns if x not in geo_features]
 data['nan_count'] = data[iris_features].apply(lambda x: pd.isnull(x).sum(), axis=1)
 
 # Create 4 group of Iris Quality
-data['iris_quality'] = pd.cut(data['nan_count'], 4, labels=range(1, 5))
+data['iris_quality'] = pd.cut(data['nan_count'], 4, labels=list(range(1, 5)))
 
 #1    50738
 #2      124
@@ -1050,5 +1050,5 @@ data['iris_quality'] = pd.cut(data['nan_count'], 4, labels=range(1, 5))
 
 
 # Extract
-print "Extracting file in /data/output.csv"
+print("Extracting file in /data/output.csv")
 data.to_csv('data/output.csv', sep=';', index=False, encoding='utf-8')
